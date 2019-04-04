@@ -1,0 +1,100 @@
+cmake_minimum_required (VERSION 2.6)
+set (CMAKE_CXX_STANDARD 11)
+project (Grafika)
+set(APP_TARGET Grafika)
+
+# GLFW
+find_package(glfw3 REQUIRED)
+include_directories(${GLFW_INCLUDE_DIRS})
+link_libraries(${GLFW_LIBRARY_DIRS})
+
+# opengl
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIRS})
+
+# glew
+find_package(GLEW REQUIRED)
+include_directories(${GLEW_INCLUDE_DIRS})
+
+# assimp
+find_package(ASSIMP REQUIRED)
+include_directories(${ASSIMP_INCLUDE_DIRS})
+
+include_directories(src src/lib)
+
+# stb image library
+add_library(stb_image STATIC
+        src/lib/stb_image/stb_image.cpp
+)
+
+# abstraction library
+add_library(JokowiOpenGL STATIC 
+        src/Renderer.cpp
+        src/VertexBuffer.cpp
+        src/IndexBuffer.cpp
+        src/VertexBufferLayout.h
+        src/VertexArray.cpp
+        src/Shader.cpp
+        src/Texture.cpp
+)
+
+add_executable(explore1 src/explore1.cpp)
+target_link_libraries(
+        explore1
+        glfw
+        ${OPENGL_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        JokowiOpenGL
+        stb_image
+)
+
+add_executable(explore2 src/explore2.cpp)
+target_link_libraries(
+        explore2
+        glfw
+        ${OPENGL_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        JokowiOpenGL
+        stb_image
+)
+
+add_executable(explore3 src/explore3.cpp)
+target_link_libraries(
+        explore3
+        glfw
+        ${OPENGL_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        ${ASSIMP_LIBRARIES}
+        JokowiOpenGL
+        stb_image
+)
+
+add_executable(green_pentagon green_pentagon.cpp)
+target_link_libraries(
+        green_pentagon
+        glfw
+        ${OPENGL_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        JokowiOpenGL
+)
+
+add_executable(pentagon pentagon.cpp)
+target_link_libraries(
+        pentagon
+        glfw
+        ${OPENGL_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        JokowiOpenGL
+)
+
+add_executable(unicorn unicorn.cpp)
+target_link_libraries(
+        unicorn
+        glfw
+        ${OPENGL_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        JokowiOpenGL
+)
+
+
+
