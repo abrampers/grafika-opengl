@@ -5,10 +5,12 @@
 class Texture {
 private:
     unsigned int m_renderer_id;
-    std::string m_filepath;
     unsigned char *m_local_buffer;
     int m_width, m_height, m_bpp;
 public:
+    std::string type;
+    std::string m_filepath;
+
     Texture(const std::string& filepath);
     ~Texture();
 

@@ -58,9 +58,9 @@ target_link_libraries(
         stb_image
 )
 
-add_executable(explore3 src/explore3.cpp)
+add_executable(jeep src/explore3.cpp)
 target_link_libraries(
-        explore3
+        jeep
         glfw
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES}

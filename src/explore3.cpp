@@ -5,6 +5,11 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "stb_image/stb_image.h"
+#include "Vertex.h"
+#include "VertexArray.h"
+#include "VertexBuffer.h"
+#include "VertexBufferLayout.h"
+#include "IndexBuffer.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -16,13 +21,13 @@
 #include <vector>
 #include <map>
 
-class Shader
+class Shader1
 {
 public:
     unsigned int ID;
     // constructor generates the shader on the fly
     // ------------------------------------------------------------------------
-    Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr)
+    Shader1(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr)
     {
         // 1. retrieve the vertex/fragment source code from filePath
         std::string vertexCode;
@@ -320,19 +325,6 @@ private:
 
 using namespace std;
 
-struct Vertex {
-    // position
-    glm::vec3 Position;
-    // normal
-    glm::vec3 Normal;
-    // texCoords
-    glm::vec2 TexCoords;
-    // tangent
-    glm::vec3 Tangent;
-    // bitangent
-    glm::vec3 Bitangent;
-};
-
 struct Texture {
     unsigned int id;
     string type;
@@ -349,18 +341,32 @@ public:
 
     /*  Functions  */
     // constructor
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+    Mesh(vector<Vertex> _vertices, vector<unsigned int> _indices, vector<Texture> _textures): vertices(_vertices), indices(_indices), textures(_textures)
     {
-        this->vertices = vertices;
-        this->indices = indices;
-        this->textures = textures;
 
         // now that we have all the required data, set the vertex buffers and its attribute pointers.
         setupMesh();
+        // std::cout << "Mesh " << &vertices[0] << std::endl;
+        // vao.bind();
+        // vbo.setData(&vertices[0], vertices.size() * sizeof(Vertex));
+        // ebo.setData(&indices[0], indices.size());
+        // VertexBufferLayout layout;
+        // layout.push<float>(3);
+        // layout.push<float>(3);
+        // layout.push<float>(2);
+        // layout.push<float>(3);
+        // layout.push<float>(3);
+        // vao.addBuffer(vbo, layout);
+
+        // vao.unbind();
+    }
+
+    ~Mesh() {
+        
     }
 
     // render the mesh
-    void Draw(Shader shader) 
+    void Draw(Shader1 shader) 
     {
         // bind appropriate textures
         unsigned int diffuseNr  = 1;
@@ -390,8 +396,11 @@ public:
         
         // draw mesh
         glBindVertexArray(VAO);
+        // vao.bind();
+        // ebo.bind();
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
+        // vao.unbind();
 
         // always good practice to set everything back to defaults once configured.
         glActiveTexture(GL_TEXTURE0);
@@ -400,6 +409,9 @@ public:
 private:
     /*  Render data  */
     unsigned int VBO, EBO;
+    VertexArray vao;
+    VertexBuffer vbo;
+    IndexBuffer ebo;
 
     /*  Functions    */
     // initializes all the buffer objects/arrays
@@ -407,17 +419,17 @@ private:
     {
         // create buffers/arrays
         glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-        glGenBuffers(1, &EBO);
 
         glBindVertexArray(VAO);
         // load data into vertex buffers
+        glGenBuffers(1, &VBO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         // A great thing about structs is that their memory layout is sequential for all its items.
         // The effect is that we can simply pass a pointer to the struct and it translates perfectly to a glm::vec3/2 array which
         // again translates to 3/2 floats which translates to a byte array.
         glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);  
 
+        glGenBuffers(1, &EBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
@@ -463,7 +475,7 @@ public:
     }
 
     // draws the model, and thus all its meshes
-    void Draw(Shader shader)
+    void Draw(Shader1 shader)
     {
         for(unsigned int i = 0; i < meshes.size(); i++)
             meshes[i].Draw(shader);
@@ -722,11 +734,11 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader ourShader("../res/shaders/1.model_loading.vs", "../res/shaders/1.model_loading.fs");
+    Shader1 ourShader("../res/shaders/1.model_loading.vs", "../res/shaders/1.model_loading.fs");
 
     // load models
     // -----------
-    Model ourModel("../res/models/nanosuit/nanosuit.obj");
+    Model ourModel("../res/models/jeep/Jeep_Renegade_2016.obj");
 
     
     // draw in wireframe
@@ -755,7 +767,7 @@ int main()
         ourShader.use();
 
         // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
         glm::mat4 view = camera.GetViewMatrix();
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
