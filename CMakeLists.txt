@@ -58,9 +58,9 @@ target_link_libraries(
         stb_image
 )
 
-add_executable(jeep src/explore3.cpp)
+add_executable(explore3 src/explore3.cpp)
 target_link_libraries(
-        jeep
+        explore3
         glfw
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES}
@@ -94,6 +94,27 @@ target_link_libraries(
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES}
         JokowiOpenGL
+)
+
+add_executable(jeep jeep.cpp)
+target_link_libraries(
+        jeep
+        glfw
+        ${OPENGL_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        ${ASSIMP_LIBRARIES}
+        JokowiOpenGL
+        stb_image
+)
+
+add_executable(lighting src/lighting.cpp)
+target_link_libraries(
+        lighting
+        glfw
+        ${OPENGL_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        JokowiOpenGL
+        stb_image
 )
 
 
