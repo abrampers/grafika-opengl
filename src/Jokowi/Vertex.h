@@ -4,6 +4,7 @@
 
 const unsigned int VERTEX_ = 1234;
 
+namespace Jokowi {
 struct Vertex {
     glm::vec3 Position;
     glm::vec3 Normal;
@@ -11,3 +12,4 @@ struct Vertex {
     glm::vec2 Tangent;
     glm::vec2 Bitangent;
 };
+}

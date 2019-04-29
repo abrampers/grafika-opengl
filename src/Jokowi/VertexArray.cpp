@@ -1,15 +1,15 @@
 #include "VertexArray.h"
 #include "VertexBufferLayout.h"
 
-VertexArray::VertexArray() {
+Jokowi::VertexArray::VertexArray() {
     GLCall(glGenVertexArrays(1, &m_renderer_id));
 }
 
-VertexArray::~VertexArray() {
+Jokowi::VertexArray::~VertexArray() {
     GLCall(glDeleteVertexArrays(1, &m_renderer_id));
 }
 
-void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) {
+void Jokowi::VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) {
     bind();
     vb.bind();
     const auto& elements = layout.getElements();
@@ -23,10 +23,10 @@ void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
     }
 }
 
-void VertexArray::bind() const {
+void Jokowi::VertexArray::bind() const {
     GLCall(glBindVertexArray(m_renderer_id));
 }
 
-void VertexArray::unbind() const {
+void Jokowi::VertexArray::unbind() const {
     GLCall(glBindVertexArray(0));
 }

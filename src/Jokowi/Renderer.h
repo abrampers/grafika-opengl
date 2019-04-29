@@ -18,6 +18,7 @@
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, int line);
 
+namespace Jokowi {
 class Renderer {
 private:
     /* data */
@@ -28,4 +29,5 @@ public:
     void draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
     void clear(bool withColor) const;
 };
+}
 

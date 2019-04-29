@@ -20,6 +20,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+using namespace Jokowi;
 
 float scale = 100;
 

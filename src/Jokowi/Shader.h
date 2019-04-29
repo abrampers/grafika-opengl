@@ -5,6 +5,7 @@
 
 #include "glm/glm.hpp"
 
+namespace Jokowi {
 struct ShaderProgramSource {
     std::string vertexSource;
     std::string fragmentSource;
@@ -39,3 +40,4 @@ public:
     void setUniformVec3f(const std::string& name, const glm::vec3& vec);
     void setUniformMat4f(const std::string& name, const glm::mat4& matrix);
 };
+}

@@ -3,6 +3,7 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
+namespace Jokowi {
 class VertexBufferLayout;
 
 class VertexArray {
@@ -17,3 +18,4 @@ public:
     void bind() const;
     void unbind() const;
 };
+}

@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-Texture::Texture(const std::string& filepath): m_renderer_id(0), m_filepath(filepath), m_local_buffer(nullptr), m_height(0), m_width(0), m_bpp(0) {
+Jokowi::Texture::Texture(const std::string& filepath): m_renderer_id(0), m_filepath(filepath), m_local_buffer(nullptr), m_height(0), m_width(0), m_bpp(0) {
     stbi_set_flip_vertically_on_load(1);
     m_local_buffer = stbi_load(m_filepath.c_str(), &m_width, &m_height, &m_bpp, 4);
 
@@ -25,15 +25,15 @@ Texture::Texture(const std::string& filepath): m_renderer_id(0), m_filepath(file
         std::cout << "Failed to load texture" << std::endl;
 }
 
-Texture::~Texture() {
+Jokowi::Texture::~Texture() {
     GLCall(glDeleteTextures(1, &m_renderer_id));
 }
 
-void Texture::bind(unsigned int slot) const {
+void Jokowi::Texture::bind(unsigned int slot) const {
     GLCall(glActiveTexture(GL_TEXTURE0 + slot));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_renderer_id));
 }
 
-void Texture::unbind() const {
+void Jokowi::Texture::unbind() const {
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }

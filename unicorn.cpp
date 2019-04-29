@@ -18,6 +18,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
+using namespace Jokowi;
 
 #define DEBUG
 

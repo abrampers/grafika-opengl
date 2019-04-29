@@ -22,6 +22,7 @@
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+using namespace Jokowi;
 
 #define DEBUG
 
@@ -152,27 +153,27 @@ int main() {
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
         // VertexArray
-        VertexArray cubeVAO;
+        Jokowi::VertexArray cubeVAO;
 
         // VertexBuffer
-        VertexBuffer vb(vertices, 6 * 6 * 8 * sizeof(float));
+        Jokowi::VertexBuffer vb(vertices, 6 * 6 * 8 * sizeof(float));
 
-        VertexBufferLayout layout;
+        Jokowi::VertexBufferLayout layout;
         layout.push<float>(3);
         layout.push<float>(3);
         layout.push<float>(2);
         cubeVAO.addBuffer(vb, layout);
 
-        VertexArray lightVAO;
+        Jokowi::VertexArray lightVAO;
         lightVAO.addBuffer(vb, layout);
 
         // Shaders
-        Shader shader("../res/shaders/lighting.glsl");
+        Jokowi::Shader shader("../res/shaders/lighting.glsl");
         shader.setUniform3f("objectColor", 1.0f, 0.5f, 0.31f);
         shader.setUniform3f("lightColor",  1.0f, 1.0f, 1.0f);
         shader.setUniformVec3f("lightPos", lightPos);
 
-        Shader lampShader("../res/shaders/lamp.glsl");
+        Jokowi::Shader lampShader("../res/shaders/lamp.glsl");
 
 
         cubeVAO.unbind();
@@ -183,7 +184,7 @@ int main() {
 
 
         // Renderer
-        Renderer renderer;
+        Jokowi::Renderer renderer;
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {

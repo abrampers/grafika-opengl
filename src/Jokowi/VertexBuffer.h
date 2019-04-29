@@ -1,5 +1,6 @@
 #pragma once
 
+namespace Jokowi {
 class VertexBuffer {
 private:
     unsigned int m_renderer_id;
@@ -13,3 +14,4 @@ public:
     void unbind() const;
     void setData(const void *data, unsigned int size) const;
 };
+}

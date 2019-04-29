@@ -8,25 +8,25 @@
 
 #include "glm/gtc/type_ptr.hpp"
 
-Shader::Shader(const std::string& filepath): m_filepath(filepath), m_renderer_id(0) {
+Jokowi::Shader::Shader(const std::string& filepath): m_filepath(filepath), m_renderer_id(0) {
     ShaderProgramSource source = parseShader(filepath);
     m_renderer_id = createShader(source.vertexSource, source.fragmentSource);
 }
 
-Shader::~Shader() {
+Jokowi::Shader::~Shader() {
     GLCall(glDeleteProgram(m_renderer_id));
 }   
 
 
-void Shader::bind() const {
+void Jokowi::Shader::bind() const {
     GLCall(glUseProgram(m_renderer_id));
 }
 
-void Shader::unbind() const {
+void Jokowi::Shader::unbind() const {
     GLCall(glUseProgram(0));
 }
 
-int Shader::getUniformLocation(const std::string& name) {
+int Jokowi::Shader::getUniformLocation(const std::string& name) {
     if (m_uniform_location_cache.find(name) != m_uniform_location_cache.end()) {
         return m_uniform_location_cache[name];
     }
@@ -40,32 +40,32 @@ int Shader::getUniformLocation(const std::string& name) {
     return location;
 }
 
-void Shader::setUniform1i(const std::string& name, int value) {
+void Jokowi::Shader::setUniform1i(const std::string& name, int value) {
     GLCall(glUniform1i(getUniformLocation(name), value));
 }
 
-void Shader::setUniform1f(const std::string& name, float value) {
+void Jokowi::Shader::setUniform1f(const std::string& name, float value) {
     GLCall(glUniform1f(getUniformLocation(name), value));
 }
 
-void Shader::setUniform3f(const std::string& name, float v0, float v1, float v2) {
+void Jokowi::Shader::setUniform3f(const std::string& name, float v0, float v1, float v2) {
     GLCall(glUniform3f(getUniformLocation(name), v0, v1, v2));
 }
 
-void Shader::setUniform4f(const std::string& name, float v0, float v1, float v2, float v3) {
+void Jokowi::Shader::setUniform4f(const std::string& name, float v0, float v1, float v2, float v3) {
     GLCall(glUniform4f(getUniformLocation(name), v0, v1, v2, v3));
 }
 
-void Shader::setUniformVec3f(const std::string& name, const glm::vec3& vec) {
+void Jokowi::Shader::setUniformVec3f(const std::string& name, const glm::vec3& vec) {
     GLCall(glUniform3f(getUniformLocation(name), vec.x, vec.y, vec.z));
 }
 
-void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
+void Jokowi::Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
     GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix)));
 }
 
 
-ShaderProgramSource Shader::parseShader(const std::string& filepath) {
+Jokowi::ShaderProgramSource Jokowi::Shader::parseShader(const std::string& filepath) {
     std::ifstream stream(filepath);
 
     enum class ShaderType {
@@ -90,7 +90,7 @@ ShaderProgramSource Shader::parseShader(const std::string& filepath) {
     return { ss[0].str(), ss[1].str() };
 }
 
-unsigned int Shader::compileShader(unsigned int type, const std::string& source) {
+unsigned int Jokowi::Shader::compileShader(unsigned int type, const std::string& source) {
     unsigned int id = glCreateShader(type);
     const char* src = source.c_str();
     glShaderSource(id, 1, &src, nullptr);
@@ -116,7 +116,7 @@ unsigned int Shader::compileShader(unsigned int type, const std::string& source)
     return id;
 }
 
-unsigned int Shader::createShader(const std::string& vertexShader, const std::string& fragmentShader) {
+unsigned int Jokowi::Shader::createShader(const std::string& vertexShader, const std::string& fragmentShader) {
     unsigned int program = glCreateProgram();
     unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShader);
     unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);

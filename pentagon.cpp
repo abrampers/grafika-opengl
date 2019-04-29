@@ -18,6 +18,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
+using namespace Jokowi;
 
 #define DEBUG
 
@@ -71,21 +72,21 @@ int main() {
         };
 
         // VertexArray
-        VertexArray va;
+        Jokowi::VertexArray va;
 
         // VertexBuffer
-        VertexBuffer vb(vertices, 6 * 6 * sizeof(float));
+        Jokowi::VertexBuffer vb(vertices, 6 * 6 * sizeof(float));
 
-        VertexBufferLayout layout;
+        Jokowi::VertexBufferLayout layout;
         layout.push<float>(2);
         layout.push<float>(4);
         va.addBuffer(vb, layout);
 
         // IndexBuffer
-        IndexBuffer ib(indices, 15);
+        Jokowi::IndexBuffer ib(indices, 15);
 
         // Shaders
-        Shader shader("../res/shaders/basic.glsl");
+        Jokowi::Shader shader("../res/shaders/basic.glsl");
 
         va.unbind();
         vb.unbind();
@@ -93,7 +94,7 @@ int main() {
         shader.unbind();
 
         // Renderer
-        Renderer renderer;
+        Jokowi::Renderer renderer;
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {

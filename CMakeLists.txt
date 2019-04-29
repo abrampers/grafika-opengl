@@ -20,7 +20,12 @@ include_directories(${GLEW_INCLUDE_DIRS})
 find_package(ASSIMP REQUIRED)
 include_directories(${ASSIMP_INCLUDE_DIRS})
 
-include_directories(src src/lib)
+include_directories(
+        src
+        src/Jokowi
+        src/Maruf 
+        src/lib
+)
 
 # stb image library
 add_library(stb_image STATIC
@@ -28,46 +33,46 @@ add_library(stb_image STATIC
 )
 
 # abstraction library
-add_library(JokowiOpenGL STATIC 
-        src/Renderer.cpp
-        src/VertexBuffer.cpp
-        src/IndexBuffer.cpp
-        src/VertexBufferLayout.h
-        src/VertexArray.cpp
-        src/Shader.cpp
-        src/Texture.cpp
+add_library(Jokowi STATIC 
+        src/Jokowi/Renderer.cpp
+        src/Jokowi/VertexBuffer.cpp
+        src/Jokowi/IndexBuffer.cpp
+        src/Jokowi/VertexBufferLayout.h
+        src/Jokowi/VertexArray.cpp
+        src/Jokowi/Shader.cpp
+        src/Jokowi/Texture.cpp
 )
 
-add_executable(explore1 src/explore1.cpp)
-target_link_libraries(
-        explore1
-        glfw
-        ${OPENGL_LIBRARIES}
-        ${GLEW_LIBRARIES}
-        JokowiOpenGL
-        stb_image
-)
+# add_executable(explore1 src/explore1.cpp)
+# target_link_libraries(
+#         explore1
+#         glfw
+#         ${OPENGL_LIBRARIES}
+#         ${GLEW_LIBRARIES}
+#         Jokowi
+#         stb_image
+# )
 
-add_executable(explore2 src/explore2.cpp)
-target_link_libraries(
-        explore2
-        glfw
-        ${OPENGL_LIBRARIES}
-        ${GLEW_LIBRARIES}
-        JokowiOpenGL
-        stb_image
-)
+# add_executable(explore2 src/explore2.cpp)
+# target_link_libraries(
+#         explore2
+#         glfw
+#         ${OPENGL_LIBRARIES}
+#         ${GLEW_LIBRARIES}
+#         Jokowi
+#         stb_image
+# )
 
-add_executable(explore3 src/explore3.cpp)
-target_link_libraries(
-        explore3
-        glfw
-        ${OPENGL_LIBRARIES}
-        ${GLEW_LIBRARIES}
-        ${ASSIMP_LIBRARIES}
-        JokowiOpenGL
-        stb_image
-)
+# add_executable(explore3 src/explore3.cpp)
+# target_link_libraries(
+#         explore3
+#         glfw
+#         ${OPENGL_LIBRARIES}
+#         ${GLEW_LIBRARIES}
+#         ${ASSIMP_LIBRARIES}
+#         Jokowi
+#         stb_image
+# )
 
 add_executable(green_pentagon green_pentagon.cpp)
 target_link_libraries(
@@ -75,7 +80,7 @@ target_link_libraries(
         glfw
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES}
-        JokowiOpenGL
+        Jokowi
 )
 
 add_executable(pentagon pentagon.cpp)
@@ -84,7 +89,7 @@ target_link_libraries(
         glfw
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES}
-        JokowiOpenGL
+        Jokowi
 )
 
 add_executable(unicorn unicorn.cpp)
@@ -93,7 +98,7 @@ target_link_libraries(
         glfw
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES}
-        JokowiOpenGL
+        Jokowi
 )
 
 add_executable(jeep jeep.cpp)
@@ -103,19 +108,29 @@ target_link_libraries(
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES}
         ${ASSIMP_LIBRARIES}
-        JokowiOpenGL
+        Jokowi
         stb_image
 )
 
-add_executable(lighting src/lighting.cpp)
+# add_executable(lighting src/lighting.cpp)
+# target_link_libraries(
+#         lighting
+#         glfw
+#         ${OPENGL_LIBRARIES}
+#         ${GLEW_LIBRARIES}
+#         Jokowi
+#         stb_image
+# )
+
+add_executable(uas uas.cpp)
 target_link_libraries(
-        lighting
+        uas
         glfw
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES}
-        JokowiOpenGL
+        ${ASSIMP_LIBRARIES}
         stb_image
+        Jokowi
 )
-
 
 

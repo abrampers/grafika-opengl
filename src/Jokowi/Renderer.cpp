@@ -13,21 +13,21 @@ bool GLLogCall(const char* function, const char* file, int line) {
     return true;
 }
 
-Renderer::Renderer(/* args */) {
+Jokowi::Renderer::Renderer(/* args */) {
 
 }
 
-Renderer::~Renderer() {
+Jokowi::Renderer::~Renderer() {
 
 }
 
-void Renderer::clear(bool withColor) const {
+void Jokowi::Renderer::clear(bool withColor) const {
     if (withColor)
         glClearColor(150.0f/255.0f, 180.0f/255.0f, 241.0f/255.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Renderer::draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const {
+void Jokowi::Renderer::draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const {
     shader.bind();
     va.bind();
     ib.bind();

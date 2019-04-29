@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include "Vertex.h"
 
+namespace Jokowi {
 struct VertexBufferElement {
     unsigned int type;
     unsigned int count;
@@ -59,4 +60,5 @@ public:
     inline unsigned int getStride() const {
         return m_stride;
     }
-};
+};    
+}

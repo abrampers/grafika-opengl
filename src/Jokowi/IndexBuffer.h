@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Jokowi
+{
 class IndexBuffer {
 private:
     unsigned int m_renderer_id;
@@ -19,3 +21,4 @@ public:
         return m_count;
     }
 };
+}

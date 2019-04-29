@@ -21,6 +21,8 @@
 #include <vector>
 #include <map>
 
+using namespace Jokowi;
+
 float scale = 100;
 
 glm::vec3 lightPos(1.2f / scale, 1.0f / scale, 2.0f / scale);
