@@ -21,15 +21,15 @@ find_package(ASSIMP REQUIRED)
 include_directories(${ASSIMP_INCLUDE_DIRS})
 
 include_directories(
-        src
-        src/Jokowi
-        src/Maruf 
-        src/lib
+        include
+        include/Jokowi
+        include/Maruf 
+        lib
 )
 
 # stb image library
 add_library(stb_image STATIC
-        src/lib/stb_image/stb_image.cpp
+        lib/stb_image/stb_image.cpp
 )
 
 # abstraction library
@@ -37,7 +37,7 @@ add_library(Jokowi STATIC
         src/Jokowi/Renderer.cpp
         src/Jokowi/VertexBuffer.cpp
         src/Jokowi/IndexBuffer.cpp
-        src/Jokowi/VertexBufferLayout.h
+        include/Jokowi/VertexBufferLayout.h
         src/Jokowi/VertexArray.cpp
         src/Jokowi/Shader.cpp
         src/Jokowi/Texture.cpp
