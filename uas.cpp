@@ -161,9 +161,9 @@ int main() {
     std::vector<Jokowi::Particle> raindrops;
     int num_raindrops = 10000;
     for(int i = 0; i < num_raindrops; i++) {
-        float pos_x = (float) (rand() % 20) - 10;
-        float pos_y = (float) (rand() % 10) + 10;
-        float pos_z = (float) (rand() % 20) - 10;
+        float pos_x = (float) (rand() % 200) / 10 - 10;
+        float pos_y = (float) (rand() % 100) / 10 + 10;
+        float pos_z = (float) (rand() % 200) / 10 - 10;
         Jokowi::Particle raindrop(glm::vec3(pos_x, pos_y, pos_z), neg_y);
         raindrops.push_back(raindrop);
     }
