@@ -38,6 +38,15 @@ float lastFrame = 0.0f;
 
 glm::vec3 lightPos(10.0f, 10.0f, 2.0f);
 
+int random(int min, int max) {
+    static bool first = true;
+    if (first) {  
+        srand( time(NULL) ); //seeding for the first time only!
+        first = false;
+    }
+    return min + rand() % (( max + 1 ) - min);
+}
+
 int main() {
     if (!glfwInit())
         return -1;
@@ -51,8 +60,7 @@ int main() {
 #endif
 
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "UAS Computer Graphics: Jeep with rain", NULL, NULL);
-    if (window == NULL)
-    {
+    if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
@@ -128,6 +136,13 @@ int main() {
     layout.push<float>(3);
     lightVAO.addBuffer(vb, layout);
 
+    // Lamp position
+    glm::mat4 lampModel = glm::mat4(1.0f);
+    lampModel = glm::translate(lampModel, lightPos);
+    lampModel = glm::scale(lampModel, glm::vec3(0.2f)); // a smaller cube
+    lampShader.bind();
+    lampShader.setUniformMat4f("model", lampModel);
+
     // load models
     Model ourModel("../res/models/jeep/Jeep_Renegade_2016.obj");
 
@@ -168,11 +183,55 @@ int main() {
         raindrops.push_back(raindrop);
     }
 
+    float scale = 0.01f;
+    glm::mat4 scale_matrix(1.0f);
+    scale_matrix = glm::scale(scale_matrix, glm::vec3(scale, scale, scale));
+    raindrop_shader.bind();
+    raindrop_shader.setUniformMat4f("scale", scale_matrix);
+
+    // Smoke
+    float smoke_vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    };
+
+    Jokowi::VertexArray smoke_vao;
+    Jokowi::VertexBuffer smoke_vb(smoke_vertices, 6 * 5 * sizeof(float));
+
+    Jokowi::VertexBufferLayout smoke_layout;
+    smoke_layout.push<float>(3);
+    smoke_layout.push<float>(2);
+    smoke_vao.addBuffer(smoke_vb, smoke_layout);
+
+    Jokowi::Shader smoke_shader("../res/shaders/smoke.glsl");
+    smoke_shader.bind();
+    Jokowi::Texture smoke_texture("../res/textures/smoke.png");
+    smoke_texture.bind(0);
+    smoke_shader.setUniform1i("smoke_texture", 0);
+
+    glm::vec3 neg_z(0.0f, 0.0f, -0.1f);
+
+    std::vector<Jokowi::Particle> smokes;
+    int num_smokes = 100;
+    for(int i = 0; i < num_smokes; i++) {
+        float pos_x = (float) random(42, 50) / 100;
+        float pos_y = (float) random(53, 57) / 100;
+        float pos_z = (float) random(-250, -210) / 100;
+        Jokowi::Particle smoke(glm::vec3(pos_x, pos_y, pos_z), neg_z);
+        smokes.push_back(smoke);
+    }
+    
+    smoke_shader.bind();
+    smoke_shader.setUniformMat4f("scale", scale_matrix);
+
     Jokowi::Renderer renderer;
 
     // render loop
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         // per-frame time logic
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -182,7 +241,7 @@ int main() {
         processInput(window);
 
         // render
-        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Uniforms
@@ -213,26 +272,35 @@ int main() {
         lampShader.bind();
         lampShader.setUniformMat4f("projection", projection);
         lampShader.setUniformMat4f("view", view);
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-        lampShader.setUniformMat4f("model", model);
 
         renderer.draw(lightVAO, 36, lampShader);
 
+        // Raindrop
         raindrop_shader.bind();
         raindrop_shader.setUniformMat4f("projection", projection);
         raindrop_shader.setUniformMat4f("view", view);
         raindrop_texture.bind(0);
         for(Jokowi::Particle &raindrop: raindrops) {
             glm::mat4 raindrop_model = glm::mat4(1.0f);
-            float scale = 0.01f;
             raindrop_model = glm::translate(raindrop_model, raindrop.GetPosition());
-            raindrop_model = glm::scale(raindrop_model, glm::vec3(scale, scale, scale));
-            raindrop_shader.setUniformMat4f("model", raindrop_model);
+            raindrop_shader.setUniformMat4f("translate", raindrop_model);
 
             renderer.draw(raindrop_vao, 6, raindrop_shader);
             raindrop.Update(deltaTime);
+        }
+
+        // Smoke
+        smoke_shader.bind();
+        smoke_shader.setUniformMat4f("projection", projection);
+        smoke_shader.setUniformMat4f("view", view);
+        smoke_texture.bind(0);
+        for(Jokowi::Particle &smoke: smokes) {
+            glm::mat4 smoke_model = glm::mat4(1.0f);
+            smoke_model = glm::translate(smoke_model, smoke.GetPosition());
+            smoke_shader.setUniformMat4f("translate", smoke_model);
+
+            renderer.draw(smoke_vao, 6, smoke_shader);
+            smoke.Update(deltaTime);
         }
 
         glfwSwapBuffers(window);
@@ -243,8 +311,7 @@ int main() {
     return 0;
 }
 
-void processInput(GLFWwindow *window)
-{
+void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
@@ -258,15 +325,12 @@ void processInput(GLFWwindow *window)
         camera.ProcessKeyboard(RIGHT, deltaTime);
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-    if (firstMouse)
-    {
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    if (firstMouse) { 
         lastX = xpos;
         lastY = ypos;
         firstMouse = false;
@@ -281,7 +345,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     camera.ProcessMouseScroll(yoffset);
 }

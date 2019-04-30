@@ -24,8 +24,8 @@ out vec4 FragColor;
 // in vec3 ourColor;
 in vec2 TexCoord;
 
-uniform sampler2D raindrop_texture;
+uniform sampler2D smoke_texture;
 
 void main() {
-    FragColor = texture(raindrop_texture, TexCoord);
+    FragColor = texture(smoke_texture, TexCoord);
 }
