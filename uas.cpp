@@ -14,8 +14,11 @@
 #include <Jokowi/VertexBuffer.h>
 #include <Jokowi/VertexBufferLayout.h>
 #include <Jokowi/IndexBuffer.h>
+#include <Jokowi/Texture.h>
+#include <Jokowi/Particle.h>
 
 #include <iostream>
+#include <vector>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -25,7 +28,7 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-Camera camera(glm::vec3(0.0f, -1.5f, 5.0f));
+Camera camera(glm::vec3(0.0f, 1.5f, 10.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -33,13 +36,14 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-float scale = 100;
-glm::vec3 lightPos(100.0f / scale, 1.0f / scale, 2.0f / scale);
+glm::vec3 lightPos(10.0f, 10.0f, 2.0f);
 
 int main() {
-    glfwInit();
+    if (!glfwInit())
+        return -1;
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
@@ -106,6 +110,9 @@ int main() {
         -0.5f,  0.5f, -0.5f,
     };
 
+    GLCall(glEnable(GL_BLEND));
+    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
     Shader ourShader("../res/shaders/1.model_loading.vs", "../res/shaders/1.model_loading.fs");
     ourShader.use();
     ourShader.setInt("material.diffuse", 0);
@@ -123,6 +130,45 @@ int main() {
 
     // load models
     Model ourModel("../res/models/jeep/Jeep_Renegade_2016.obj");
+
+    // Raindrop
+    float raindrop_vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    };
+
+    Jokowi::VertexArray raindrop_vao;
+    Jokowi::VertexBuffer raindrop_vb(raindrop_vertices, 6 * 5 * sizeof(float));
+
+    Jokowi::VertexBufferLayout raindrop_layout;
+    raindrop_layout.push<float>(3);
+    raindrop_layout.push<float>(2);
+    raindrop_vao.addBuffer(raindrop_vb, raindrop_layout);
+
+    Jokowi::Shader raindrop_shader("../res/shaders/raindrop.glsl");
+    raindrop_shader.bind();
+    
+    Jokowi::Texture raindrop_texture("../res/textures/raindrop.png");
+    raindrop_texture.bind(0);
+    raindrop_shader.setUniform1i("raindrop_texture", 0);
+
+    glm::vec3 neg_y(0.0f, -5.0f, 0.0f);
+
+    std::vector<Jokowi::Particle> raindrops;
+    int num_raindrops = 10000;
+    for(int i = 0; i < num_raindrops; i++) {
+        float pos_x = (float) (rand() % 20) - 10;
+        float pos_y = (float) (rand() % 10) + 10;
+        float pos_z = (float) (rand() % 20) - 10;
+        Jokowi::Particle raindrop(glm::vec3(pos_x, pos_y, pos_z), neg_y);
+        raindrops.push_back(raindrop);
+    }
+
+    Jokowi::Renderer renderer;
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -160,8 +206,6 @@ int main() {
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
 
@@ -174,8 +218,22 @@ int main() {
         model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
         lampShader.setUniformMat4f("model", model);
 
-        lightVAO.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        renderer.draw(lightVAO, 36, lampShader);
+
+        raindrop_shader.bind();
+        raindrop_shader.setUniformMat4f("projection", projection);
+        raindrop_shader.setUniformMat4f("view", view);
+        raindrop_texture.bind(0);
+        for(Jokowi::Particle &raindrop: raindrops) {
+            glm::mat4 raindrop_model = glm::mat4(1.0f);
+            float scale = 0.01f;
+            raindrop_model = glm::translate(raindrop_model, raindrop.GetPosition());
+            raindrop_model = glm::scale(raindrop_model, glm::vec3(scale, scale, scale));
+            raindrop_shader.setUniformMat4f("model", raindrop_model);
+
+            renderer.draw(raindrop_vao, 6, raindrop_shader);
+            raindrop.Update(deltaTime);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();

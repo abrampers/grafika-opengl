@@ -26,6 +26,7 @@ public:
     Renderer(/* args */);
     ~Renderer();
 
+    void draw(const VertexArray& va, unsigned int no_vertex, const Shader& shader) const;
     void draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
     void clear(bool withColor) const;
 };

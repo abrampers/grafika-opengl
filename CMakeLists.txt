@@ -24,6 +24,7 @@ include_directories(
         include
         include/Jokowi
         include/Maruf 
+        include/Breakout
         lib
 )
 
@@ -41,6 +42,16 @@ add_library(Jokowi STATIC
         src/Jokowi/VertexArray.cpp
         src/Jokowi/Shader.cpp
         src/Jokowi/Texture.cpp
+        src/Jokowi/Particle.cpp
+)
+
+# Breakout game library
+add_library(breakoutLib STATIC
+        src/Breakout/game.cpp
+        src/Breakout/shader.cpp
+        src/Breakout/texture.cpp
+        src/Breakout/resource_manager.cpp
+        src/Breakout/particle_generator.cpp
 )
 
 # add_executable(explore1 src/explore1.cpp)
@@ -53,15 +64,15 @@ add_library(Jokowi STATIC
 #         stb_image
 # )
 
-# add_executable(explore2 src/explore2.cpp)
-# target_link_libraries(
-#         explore2
-#         glfw
-#         ${OPENGL_LIBRARIES}
-#         ${GLEW_LIBRARIES}
-#         Jokowi
-#         stb_image
-# )
+add_executable(explore2 src/explore2.cpp)
+target_link_libraries(
+        explore2
+        glfw
+        ${OPENGL_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        Jokowi
+        stb_image
+)
 
 # add_executable(explore3 src/explore3.cpp)
 # target_link_libraries(
@@ -131,6 +142,6 @@ target_link_libraries(
         ${ASSIMP_LIBRARIES}
         stb_image
         Jokowi
+        breakoutLib
 )
-
 
