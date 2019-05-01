@@ -45,15 +45,6 @@ add_library(Jokowi STATIC
         src/Jokowi/Particle.cpp
 )
 
-# Breakout game library
-add_library(breakoutLib STATIC
-        src/Breakout/game.cpp
-        src/Breakout/shader.cpp
-        src/Breakout/texture.cpp
-        src/Breakout/resource_manager.cpp
-        src/Breakout/particle_generator.cpp
-)
-
 # add_executable(explore1 src/explore1.cpp)
 # target_link_libraries(
 #         explore1
@@ -142,6 +133,5 @@ target_link_libraries(
         ${ASSIMP_LIBRARIES}
         stb_image
         Jokowi
-        breakoutLib
 )
 

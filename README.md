@@ -25,6 +25,12 @@ make pentagon
 
 # Task 2b: Unicorn
 make unicorn
+
+# Task 3: Car
+make jeep
+
+# Task UAS: Car + Lighting + Rain + Smoke
+make uas
 ```
 
 ## Run
@@ -39,6 +45,12 @@ cd build
 
 # Task 2b: Unicorn
 ./unicorn
+
+# Task 3: Car
+./jeep
+
+# Task UAS: Car + Lighting + Rain + Smoke
+./uas
 ```
 
 ### Created by:

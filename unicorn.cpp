@@ -1,5 +1,5 @@
 /**
- * Grafika: Task 2a
+ * Grafika: Task 2b
  * Mar 28, 2019
  * 
  * Task: Create colored unicorn with shader
